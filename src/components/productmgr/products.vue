@@ -42,7 +42,7 @@
         </Button>
       </i-col>
       <i-col span="2">
-        <Button icon="ios-add" type="primary" size="small">新增产品
+        <Button icon="ios-add" type="primary" size="small" @click="showModal = true">新增产品
         </Button>
       </i-col>
     </Row>
@@ -51,13 +51,19 @@
         <Table ref="tabDataList" :columns="columns" :data="rowList" border stripe></Table>
       </i-col>
     </Row>
+    <productAdd :show="showModal" @dismissAddProductView="showModal = false"></productAdd>
   </div>
 </template>
-
-<script>export default {
+<script>
+import productAdd from './productAdd'
+export default {
   name: 'products',
+  components: {
+    productAdd
+  },
   data () {
     return {
+      showModal: false,
       columns: [
         {
           type: 'selection',
@@ -172,7 +178,6 @@
   }
 }
 </script>
-
 <style scoped>
   .code-row-bg {
     margin-top: 20px;

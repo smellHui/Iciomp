@@ -46,7 +46,7 @@
         </div>
       </i-col>
       <i-col span="2">
-        <Button icon="ios-add" type="primary" size="small">新增话术模板
+        <Button icon="ios-add" type="primary" size="small" @click="showModal = true">新增话术模板
         </Button>
       </i-col>
     </Row>
@@ -55,13 +55,20 @@
         <Table ref="tabDataList" :columns="columns" :data="rowList" border stripe></Table>
       </i-col>
     </Row>
+    <speechAdd :show="showModal" @dismissAddProductView="showModal = false"></speechAdd>
   </div>
 </template>
 
-<script>export default {
+<script>
+import speechAdd from './speechAdd'
+export default {
   name: 'products',
+  components: {
+    speechAdd
+  },
   data () {
     return {
+      showModal: false,
       columns: [
         {
           title: '模板名称',

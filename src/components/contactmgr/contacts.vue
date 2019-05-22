@@ -42,7 +42,7 @@
         </div>
       </i-col>
       <i-col span="2">
-        <Button icon="ios-add" type="primary" size="small">新增触点
+        <Button icon="ios-add" type="primary" size="small" @click="showModal = true">新增触点
         </Button>
       </i-col>
     </Row>
@@ -51,13 +51,20 @@
         <Table ref="tabDataList" :columns="columns" :data="rowList" border stripe></Table>
       </i-col>
     </Row>
+    <contactAdd :show="showModal" @dismissAddProductView="showModal = false"></contactAdd>
   </div>
 </template>
 
-<script>export default {
+<script>
+import contactAdd from './contactAdd'
+export default {
   name: 'products',
+  components: {
+    contactAdd
+  },
   data () {
     return {
+      showModal: false,
       value1: 1,
       columns: [
         {
