@@ -19,7 +19,7 @@ import OrderDetail from '@/components/report/OrderDetail'
 import TransactionStatistics from '@/components/report/TransactionStatistics'
 import products from '@/components/productmgr/products'
 import speechs from '@/components/speechmgr/speechs'
-import contacts from '@/components/contactmgr/contacts'
+import touchs from '@/components/touchmgr/touchs'
 
 Vue.use(Router)
 
@@ -121,9 +121,9 @@ const vueRouter = new Router({
       component: speechs
     },
     {
-      path: '/contact/contacts',
-      name: 'contacts',
-      component: contacts
+      path: '/touch/touchs',
+      name: 'touchs',
+      component: touchs
     }
   ]
 })
