@@ -449,7 +449,7 @@ export default {
 .wrapper {
   background: #ffffff;
   margin: 5px;
-  padding: 5xp;
+  padding: 5px;
 }
 .row {
   height: 32px;

@@ -485,21 +485,21 @@ export default {
     // 保存修改数据，点击模态对话框“保存”按钮时触发
     saveRow () {
       this.$httpReq('/word/' + this.Data_.id, {rowData: this.Data_}, 'edit', (res) => {
-        this.$Message.success('修改后话术数据已成功保存！')
+        this.$Message.success(res.data.msg)
         this.getData()
       })
     },
     // 删除数据，点击“删除”按钮时触发
     delRow (rowData) {
       this.$httpReq('/word/' + rowData.id, '', 'del', (res) => {
-        this.$Message.success('所选话术已成功删除！')
+        this.$Message.success(res.data.msg)
         this.getData()
       })
     },
     // 新增数据，点击模态对话框“保存”按钮时触发
     addRow () {
       this.$httpReq('/word/0', {rowData: this.Data_}, 'add', (res) => {
-        this.$Message.success('新话术已成功创建！')
+        this.$Message.success(res.data.msg)
         this.getData()
         this.newRow.descName = ''
         this.newRow.sceneTypeId = null
@@ -514,8 +514,8 @@ export default {
     },
     // 设置话术开关状态
     setStatus (rowData) {
-      this.$httpReq('/word/setStatus/' + rowData.id, {}, 'edit', (res) => {
-        this.$Message.success('话术开关状态修改成功')
+      this.$httpReq('/word/setWordStatus/' + rowData.id, {}, 'edit', (res) => {
+        this.$Message.success(res.data.msg)
         this.getData()
       })
     }
@@ -528,7 +528,7 @@ export default {
 .wrapper {
   background: #ffffff;
   margin: 5px;
-  padding: 5xp;
+  padding: 5px;
 }
 .row {
   height: 32px;

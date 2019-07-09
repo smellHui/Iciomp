@@ -3,13 +3,11 @@
     <Row type="flex" justify="start" style="margin-left: 50px">
       <i-col class="icol" span="6">
         <p class="label">模板名称</p>
-        <Input v-model="searchInfo.templateName" placeholder="模板名称" style="width: 300px"/>
+        <Input v-model="searchInfo.templateName" placeholder="模板名称..." style="width: 300px"/>
       </i-col>
       <i-col class="icol" span="6">
         <p class="label">适用场景</p>
-        <Select v-model="searchInfo.suitableSence" placeholder="适用场景" filterable clearable style="width: 300px">
-          <Option v-for="item in sences" :value="item.value" :key="item.value">{{ item.label }}</Option>
-        </Select>
+        <Input v-model="searchInfo.suitableSence" placeholder="适用场景" style="width: 300px"/>
       </i-col>
       <i-col class="icol" span="3">
         <p class="label">上线状态</p>
@@ -25,11 +23,13 @@
       </i-col>
       <i-col class="icol" span="6">
         <p class="label">开始日期</p>
-        <DatePicker type="date" placeholder="开始日期" @on-change="(value) => this.searchInfo.startTime = value" style="width: 215px;margin-right: 10px"></DatePicker>
+        <DatePicker type="date" placeholder="开始日期"  @on-change="(value) => this.searchInfo.startTime = value"
+                    style="width: 215px;margin-right: 10px"></DatePicker>
       </i-col>
       <i-col class="icol" span="6">
         <p class="label">失效日期</p>
-        <DatePicker type="date" placeholder="失效日期" @on-change="(value) => this.searchInfo.endTime = value" style="width: 215px;margin-right: 10px"></DatePicker>
+        <DatePicker type="date" placeholder="失效日期"  @on-change="(value) => this.searchInfo.endTime = value"
+                    style="width: 215px;margin-right: 10px"></DatePicker>
       </i-col>
     </Row>
     <Row class="code-row-bg">
@@ -37,15 +37,11 @@
       <Button type="primary" shape="circle" icon="ios-search" @click="clearSearchInfo" style="margin-left: 30px">重 置</Button>
     </Row>
     <Row class="row">
-      <i-col span="21">
+      <i-col span="22">
         <div class="title">
           <Icon type="ios-list"/>
           话术列表
         </div>
-      </i-col>
-      <i-col span="2">
-        <Button icon="ios-add" type="primary" size="small"  @click="createProduct">新增话术模板
-        </Button>
       </i-col>
     </Row>
     <Row>
@@ -65,9 +61,10 @@
               show-sizer show-elevator/>
       </i-col>
     </Row>
-    <addSpeechPop :editMode='!editMode' :template='rowData' :title="popTitle" :show="showModal" :sences="sences" @saveInfo="saveInfo" @cancelInfo="dismissPop"></addSpeechPop>
+    <addSpeechPop :editMode='!editMode' :template='template' :title="popTitle" :show="showModal" @saveInfo="saveInfo" @cancelInfo="dismissPop"></addSpeechPop>
   </div>
 </template>
+
 <script>
 import addSpeechPop from './addSpeechPop'
 import moment from 'moment'
@@ -92,7 +89,7 @@ export default {
       showModal: false,
       editMode: false,
       popTitle: '',
-      rowData: {},
+      template: {},
       columns: [
         {
           type: 'text',
@@ -112,7 +109,7 @@ export default {
               on: {
                 click: () => {
                   this.popTitle = '查看话术模板详情'
-                  this.rowData = params.row
+                  this.template = params.row
                   this.editMode = false
                   this.showModal = true
                 }
@@ -122,7 +119,6 @@ export default {
         },
         {
           title: '模板名称',
-          width: 200,
           align: 'center',
           key: 'templateName'
         },
@@ -133,7 +129,6 @@ export default {
         },
         {
           title: '类型',
-          width: 200,
           align: 'center',
           render: (h, params) => {
             return h('div', {}, [
@@ -143,13 +138,11 @@ export default {
         },
         {
           title: '场景',
-          width: 200,
           align: 'center',
           key: 'suitableSence'
         },
         {
           title: '时间',
-          width: 220,
           align: 'center',
           render: (h, params) => {
             return h('div', {}, [
@@ -162,20 +155,14 @@ export default {
           key: 'status',
           align: 'center',
           sortable: true,
-          width: 110,
+          width: 105,
           render: (h, params) => {
             return h('i-switch', {
               props: {
                 value: params.row.status,
                 trueValue: 1,
-                falseValue: 0
-              },
-              on: {
-                'on-change': (val) => {
-                  this.rowList[params.index].status = val
-                  params.row.status = val
-                  this.setStatus(params.row)
-                }
+                falseValue: 0,
+                disabled: true
               }
             }, [
               h('span', {slot: 'open'}, '开'),
@@ -193,43 +180,29 @@ export default {
             return h('div', params.row.verify ? '已审核' : '待审核')
           }
         },
+        // 定义操作按钮列（开始）
         {
           title: '操作',
-          key: 'action',
-          width: 150,
           align: 'center',
+          width: 130,
           render: (h, params) => {
-            return h('div', [
-              h('Button', {
+            if (this.$store.state.currentLevel & 16) {
+              return h('Button', {
                 props: {
-                  type: 'primary',
-                  size: 'small'
-                },
-                style: {
-                  marginRight: '5px'
-                },
-                on: {
-                  click: () => {
-                    this.editProduct(params.row)
-                  }
-                }
-              }, '修改'),
-              h('Button', {
-                props: {
-                  type: 'error',
+                  type: params.row.verify ? 'warning' : 'primary',
+                  icon: params.row.verify ? 'md-undo' : 'md-checkmark',
                   size: 'small'
                 },
                 on: {
                   click: () => {
-                    let ids = []
-                    ids.push(params.row.id)
-                    this.deleteProduct(ids)
+                    this.audit(params.row)
                   }
                 }
-              }, '删除')
-            ])
+              }, params.row.verify ? '取消审核' : '审核通过')
+            }
           }
         }
+        // 定义操作按钮列结束（结束）
       ],
       rowList: [],
       senceList: [
@@ -259,40 +232,6 @@ export default {
           value: 1,
           label: '已审核'
         }
-      ],
-      sences: [
-        {
-          value: '低零活动',
-          label: '低零活动'
-        },
-        {
-          value: '服务查询',
-          label: '服务查询'
-        },
-        {
-          value: '互联网卡',
-          label: '互联网卡'
-        },
-        {
-          value: '欢go客户端',
-          label: '欢go客户端'
-        },
-        {
-          value: '加黑名单专用',
-          label: '加黑名单专用'
-        },
-        {
-          value: '流量产品',
-          label: '流量产品'
-        },
-        {
-          value: '流量服务提醒',
-          label: '流量服务提醒'
-        },
-        {
-          value: '语音包',
-          label: '语音包'
-        }
       ]
     }
   },
@@ -302,7 +241,6 @@ export default {
   methods: {
     // 获取当前页列表数据
     getList () {
-      console.log(this.searchInfo)
       this.$httpReq('/word/getWordList', {page: this.page, search: this.searchInfo}, 'get', (res) => {
         this.rowList = res.data.data.dataList
         this.page = res.data.data.page
@@ -311,33 +249,23 @@ export default {
         this.editMode = false
       })
     },
+    // 审核操作
+    audit (rowData) {
+      this.$httpReq('/word/auditWord/' + rowData.id, {}, 'edit', (res) => {
+        this.$Message.success(res.data.msg)
+        this.getList()
+      })
+    },
     // 新增
     saveInfo () {
-      if (!this.editMode) {
-        this.dismissPop()
-        return
-      }
-      let isCreate = this.createTag === 0
-      this.$httpReq(isCreate ? '/word/addWord' : '/word/editWord', this.rowData, 'add', (res) => {
-        this.$Message.success(res.data.msg)
-        this.showModal = false
-        this.rowData = {}
-        this.getList()
-      })
+      this.dismissPop()
     },
-    // 批量删除和单个删除
-    deleteProduct (ids) {
-      this.$httpReq('/word/deleteWords', ids, 'post', res => {
-        this.$Message.success(res.data.msg)
-        this.getList()
-      })
-    },
-    // 设置话术开关状态
-    setStatus (rowData) {
-      this.$httpReq('/word/setWordStatus/' + rowData.id, {}, 'edit', (res) => {
-        this.$Message.success(res.data.msg)
-        this.getData()
-      })
+    // 修改某一行数据
+    editProduct (params) {
+      this.popTitle = '修改话术模板'
+      this.template = params
+      this.createTag = 1
+      this.showModal = true
     },
     formatDate (time) {
       if (time === undefined || time == null) {
@@ -345,24 +273,9 @@ export default {
       }
       return moment(time).format('YYYY-MM-DD')
     },
-    // 新增产品弹框
-    createProduct () {
-      this.popTitle = '新增话术模板'
-      this.showModal = true
-      this.editMode = true
-      this.createTag = 0
-    },
-    // 修改某一行数据
-    editProduct (rowData) {
-      this.popTitle = '修改话术模板'
-      this.rowData = rowData
-      this.createTag = 1
-      this.showModal = true
-      this.editMode = true
-    },
     // 弹框隐藏
     dismissPop () {
-      this.rowData = {}
+      this.template = {}
       this.showModal = false
     },
     // 页码改变时触发
@@ -384,14 +297,10 @@ export default {
 </script>
 
 <style scoped>
-  .wrapper {
-    background: #ffffff;
-    margin: 5px;
-    padding: 5px;
-  }
   .code-row-bg {
     margin-top: 30px;
   }
+
   .row {
     height: 32px;
     line-height: 32px;
@@ -403,6 +312,11 @@ export default {
     margin-top: 20px;
     margin-left: 30px;
     align-items: center;
+  }
+  .wrapper {
+    background: #ffffff;
+    margin: 5px;
+    padding: 5px;
   }
   .label {
     width: 100px;

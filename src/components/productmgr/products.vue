@@ -1,34 +1,34 @@
 <template>
-  <div>
+  <div class="wrapper">
     <Row type="flex" justify="start" style="margin-left: 50px">
       <i-col class="icol" span="6">
-        <p class="title">产品名称</p>
+        <p class="label">产品名称</p>
         <Input v-model="searchInfo.proName" placeholder="产品名称..." style="width: 300px"/>
       </i-col>
       <i-col class="icol" span="6">
-        <p class="title">目录</p>
+        <p class="label">目录</p>
         <Select v-model="searchInfo.proMenu" clearable style="width:300px">
           <Option v-for="item in menuList" :value="item.value" :key="item.value">{{ item.label }}</Option>
         </Select>
       </i-col>
       <i-col class="icol" span="6">
-        <p class="title">产品类别</p>
+        <p class="label">产品类别</p>
         <Select v-model="searchInfo.proType" clearable style="width:300px">
           <Option v-for="item in typeList" :value="item.value" :key="item.value">{{ item.label }}</Option>
         </Select>
       </i-col>
       <i-col class="icol">
-        <p class="title">创建日期</p>
-        <DatePicker type="date" :options="searchInfo.startTime" placeholder="开始日期"
+        <p class="label">创建日期</p>
+        <DatePicker type="date" placeholder="开始日期" @on-change="(value) => this.searchInfo.startTime = value"
                     style="width: 215px;margin-right: 10px"></DatePicker>
         -
-        <DatePicker type="date" :options="searchInfo.endTime" placeholder="结束日期"
+        <DatePicker type="date" placeholder="结束日期" @on-change="(value) => this.searchInfo.endTime = value"
                     style="width: 215px;margin-left: 10px"></DatePicker>
       </i-col>
     </Row>
     <Row class="code-row-bg">
       <Button type="primary" shape="circle" icon="ios-search" @click="getList">搜 索</Button>
-      <Button type="primary" shape="circle" icon="ios-search" @click="clearSearchInfo">重 置</Button>
+      <Button type="primary" shape="circle" icon="ios-search" @click="clearSearchInfo" style="margin-left: 30px">重 置</Button>
     </Row>
     <Row class="row">
       <i-col span="20">
@@ -63,7 +63,7 @@
               show-sizer show-elevator/>
       </i-col>
     </Row>
-    <addProductPop :product='product' :title="popTitle" :menuList="menuList" :typeList="typeList" :show="showModal" @saveInfo="saveInfo" @cancelInfo="dismissPop"></addProductPop>
+    <addProductPop :editMode='!editMode' :product='rowData' :title="popTitle" :menuList="menuList" :typeList="typeList" :show="showModal" @saveInfo="saveInfo" @cancelInfo="dismissPop"></addProductPop>
   </div>
 </template>
 <script>
@@ -87,9 +87,36 @@ export default {
       // 分页组件每页数量
       pageOption: [5, 10, 20, 50, 100],
       showModal: false,
+      editMode: false,
       popTitle: '',
-      product: {},
+      rowData: {},
       columns: [
+        {
+          type: 'text',
+          width: 30,
+          align: 'center',
+          className: 'padding8cell',
+          renderHeader: (h, params) => {
+            return h('Icon', {props: {type: 'ios-eye', size: 24}, style: {marginLeft: '-12px'}})
+          },
+          render: (h, params) => {
+            let icon = []
+            icon.push(h('Icon', {props: {type: 'ios-book-outline', size: 20}, style: {marginLeft: '-2px'}}))
+            return h('div', {
+              style: {
+                cursor: 'pointer'
+              },
+              on: {
+                click: () => {
+                  this.popTitle = '查看产品详情'
+                  this.rowData = params.row
+                  this.editMode = false
+                  this.showModal = true
+                }
+              }
+            }, icon)
+          }
+        },
         {
           type: 'selection',
           width: 60,
@@ -97,31 +124,59 @@ export default {
         },
         {
           title: '产品名称',
+          align: 'center',
           key: 'proName'
         },
         {
           title: '定价ID',
+          align: 'center',
           key: 'priceId'
         },
         {
           title: '区域标识',
+          align: 'center',
           key: 'suitableCity'
         },
         {
           title: '目录',
+          align: 'center',
           key: 'proMenu'
         },
         {
           title: '产品类别',
+          align: 'center',
           key: 'proType'
         },
         {
           title: '短厅受理指令',
+          align: 'center',
           key: 'orderCode'
         },
         {
-          title: '状态',
-          key: 'status'
+          title: '开关状态',
+          key: 'status',
+          align: 'center',
+          sortable: true,
+          width: 105,
+          render: (h, params) => {
+            return h('i-switch', {
+              props: {
+                value: params.row.status,
+                trueValue: 1,
+                falseValue: 0
+              },
+              on: {
+                'on-change': (val) => {
+                  this.rowList[params.index].status = val
+                  params.row.status = val
+                  this.setStatus(params.row)
+                }
+              }
+            }, [
+              h('span', {slot: 'open'}, '开'),
+              h('span', {slot: 'close'}, '关')
+            ])
+          }
         },
         {
           title: '操作',
@@ -210,11 +265,15 @@ export default {
     },
     // 新增
     saveInfo () {
+      if (!this.editMode) {
+        this.dismissPop()
+        return
+      }
       let isCreate = this.createTag === 0
-      this.$httpReq(isCreate ? '/product/addProduct' : '/product/editProduct', this.product, 'add', res => {
+      this.$httpReq(isCreate ? '/product/addProduct' : '/product/editProduct', this.rowData, 'add', res => {
         this.$Message.success(res.data.msg)
         this.showModal = false
-        this.product = {}
+        this.rowData = {}
         this.getList()
       })
     },
@@ -225,18 +284,27 @@ export default {
         this.getList()
       })
     },
+    // 设置产品开关状态
+    setStatus (rowData) {
+      this.$httpReq('/product/setProductStatus/' + rowData.id, {}, 'edit', (res) => {
+        this.$Message.success(res.data.msg)
+        this.getList()
+      })
+    },
     // 新增产品弹框
     createProduct () {
       this.popTitle = '新增产品'
       this.showModal = true
+      this.editMode = true
       this.createTag = 0
     },
     // 修改某一行数据
-    editProduct (params) {
+    editProduct (rowData) {
       this.popTitle = '修改产品'
-      this.product = params
+      this.rowData = rowData
       this.createTag = 1
       this.showModal = true
+      this.editMode = true
     },
     // 多选框变化
     onSelectionChange (selection) {
@@ -248,7 +316,7 @@ export default {
     },
     // 弹框隐藏
     dismissPop () {
-      this.product = {}
+      this.rowData = {}
       this.showModal = false
     },
     // 页码改变时触发
@@ -270,24 +338,34 @@ export default {
 </script>
 <style scoped>
   .code-row-bg {
-    margin-top: 20px;
+    margin-top: 30px;
   }
-
   .row {
     height: 32px;
     line-height: 32px;
     margin: 5px auto;
     text-align: left
   }
-
   .icol {
     display: flex;
     margin-top: 20px;
     margin-left: 30px;
     align-items: center;
   }
-
+  .wrapper {
+    background: #ffffff;
+    margin: 5px;
+    padding: 5px;
+  }
+  .label {
+    width: 100px;
+    text-align: right;
+    padding-right: 10px;
+  }
   .title {
-    padding-right: 10px
+    font-size: 16px;
+    font-family: Arial, Helvetica, sans-serif;
+    font-weight: bolder;
+    padding-left: 10px;
   }
 </style>

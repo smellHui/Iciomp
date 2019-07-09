@@ -2,34 +2,16 @@
   <div class="wrapper">
     <Row type="flex" justify="start" style="margin-left: 50px">
       <i-col class="icol" span="6">
-        <p class="label">模板名称</p>
-        <Input v-model="searchInfo.templateName" placeholder="模板名称" style="width: 300px"/>
+        <p class="label">运营位名称</p>
+        <Input v-model="searchInfo.positionName" placeholder="产品名称..." style="width: 300px"/>
       </i-col>
-      <i-col class="icol" span="6">
-        <p class="label">适用场景</p>
-        <Select v-model="searchInfo.suitableSence" placeholder="适用场景" filterable clearable style="width: 300px">
-          <Option v-for="item in sences" :value="item.value" :key="item.value">{{ item.label }}</Option>
-        </Select>
-      </i-col>
-      <i-col class="icol" span="3">
-        <p class="label">上线状态</p>
-        <Select v-model="searchInfo.status" clearable style="width:100px">
-          <Option v-for="item in stateList" :value="item.value" :key="item.value">{{ item.label }}</Option>
-        </Select>
-      </i-col>
-      <i-col class="icol" span="3">
-        <p class="label">审核状态</p>
-        <Select v-model="searchInfo.verify" clearable style="width:100px">
-          <Option v-for="item in verifyList" :value="item.value" :key="item.value">{{ item.label }}</Option>
-        </Select>
-      </i-col>
-      <i-col class="icol" span="6">
-        <p class="label">开始日期</p>
-        <DatePicker type="date" placeholder="开始日期" @on-change="(value) => this.searchInfo.startTime = value" style="width: 215px;margin-right: 10px"></DatePicker>
-      </i-col>
-      <i-col class="icol" span="6">
-        <p class="label">失效日期</p>
-        <DatePicker type="date" placeholder="失效日期" @on-change="(value) => this.searchInfo.endTime = value" style="width: 215px;margin-right: 10px"></DatePicker>
+      <i-col class="icol">
+        <p class="label">日营销时间</p>
+        <DatePicker type="date" placeholder="开始日期" @on-change="(value) => this.searchInfo.dayBeginTime = value"
+                    style="width: 215px;margin-right: 10px"></DatePicker>
+        -
+        <DatePicker type="date" placeholder="结束日期" @on-change="(value) => this.searchInfo.dayEndTime = value"
+                    style="width: 215px;margin-left: 10px"></DatePicker>
       </i-col>
     </Row>
     <Row class="code-row-bg">
@@ -37,14 +19,14 @@
       <Button type="primary" shape="circle" icon="ios-search" @click="clearSearchInfo" style="margin-left: 30px">重 置</Button>
     </Row>
     <Row class="row">
-      <i-col span="21">
+      <i-col span="20">
         <div class="title">
           <Icon type="ios-list"/>
-          话术列表
+          运营位列表
         </div>
       </i-col>
       <i-col span="2">
-        <Button icon="ios-add" type="primary" size="small"  @click="createProduct">新增话术模板
+        <Button icon="ios-add" type="primary" size="small" @click="createProduct">新增产品
         </Button>
       </i-col>
     </Row>
@@ -65,19 +47,19 @@
               show-sizer show-elevator/>
       </i-col>
     </Row>
-    <addSpeechPop :editMode='!editMode' :template='rowData' :title="popTitle" :show="showModal" :sences="sences" @saveInfo="saveInfo" @cancelInfo="dismissPop"></addSpeechPop>
+    <operationPop :editMode='!editMode' :product='rowData' :touchName='touch.touchName' :title="popTitle" :menuList="menuList" :typeList="typeList" :show="showModal" @saveInfo="saveInfo" @cancelInfo="dismissPop"></operationPop>
   </div>
 </template>
 <script>
-import addSpeechPop from './addSpeechPop'
-import moment from 'moment'
+import operationPop from './operationPop'
 export default {
   name: 'products',
   components: {
-    addSpeechPop
+    operationPop
   },
   data () {
     return {
+      touch: {},
       createTag: 0, // 0-新增，1-修改
       deleteIds: [],
       searchInfo: {},
@@ -111,8 +93,13 @@ export default {
               },
               on: {
                 click: () => {
-                  this.popTitle = '查看话术模板详情'
-                  this.rowData = params.row
+                  this.popTitle = '查看运营位详情'
+                  let rowData = params.row
+                  let marketTime = []
+                  marketTime.push(rowData.dayBeginTime)
+                  marketTime.push(rowData.dayEndTime)
+                  this.$set(rowData, 'marketTime', marketTime)
+                  this.rowData = rowData
                   this.editMode = false
                   this.showModal = true
                 }
@@ -121,76 +108,87 @@ export default {
           }
         },
         {
-          title: '模板名称',
-          width: 200,
+          title: '名称',
           align: 'center',
-          key: 'templateName'
+          width: 140,
+          key: 'positionName'
         },
         {
-          title: '模板内容',
+          title: '编码',
           align: 'center',
-          key: 'wordContent'
+          width: 160,
+          key: 'positionCode'
         },
         {
-          title: '类型',
-          width: 200,
+          title: '用户日接触频次',
+          width: 320,
           align: 'center',
-          render: (h, params) => {
-            return h('div', {}, [
-              h('p', params.row.templateType === 0 ? '主话术' : '营销后缀')
-            ])
-          }
+          children: [
+            {
+              title: '周期（天）',
+              align: 'center',
+              key: 'touchLimitCycle'
+            },
+            {
+              title: '频次',
+              align: 'center',
+              key: 'touchLimitNum'
+            }
+          ]
         },
         {
-          title: '场景',
-          width: 200,
+          title: '月次接触阀值（次）',
+          width: 140,
           align: 'center',
-          key: 'suitableSence'
+          key: 'monthLimitCount'
         },
         {
-          title: '时间',
-          width: 220,
+          title: '日营销时间',
           align: 'center',
-          render: (h, params) => {
-            return h('div', {}, [
-              h('p', this.formatDate(params.row.startTime) + ' - ' + this.formatDate(params.row.endTime))
-            ])
-          }
+          children: [
+            {
+              title: '起始',
+              align: 'center',
+              key: 'dayBeginTime'
+            },
+            {
+              title: '截至',
+              align: 'center',
+              key: 'dayEndTime'
+            }
+          ]
+        },
+        {
+          title: '创建人',
+          align: 'center',
+          width: 140,
+          key: 'operator'
         },
         {
           title: '开关状态',
           key: 'status',
           align: 'center',
           sortable: true,
-          width: 110,
+          width: 105,
           render: (h, params) => {
             return h('i-switch', {
               props: {
                 value: params.row.status,
                 trueValue: 1,
-                falseValue: 0
+                falseValue: 0,
+                disabled: (this.$store.state.currentLevel & 2) === 0
               },
               on: {
                 'on-change': (val) => {
                   this.rowList[params.index].status = val
                   params.row.status = val
-                  this.setStatus(params.row)
+                  this.editInfo(params.row)
                 }
               }
             }, [
               h('span', {slot: 'open'}, '开'),
               h('span', {slot: 'close'}, '关')
             ])
-          }
-        },
-        {
-          title: '审核状态',
-          width: 105,
-          key: 'state',
-          align: 'center',
-          sortable: true,
-          render: (h, params) => {
-            return h('div', params.row.verify ? '已审核' : '待审核')
           }
         },
         {
@@ -232,69 +230,40 @@ export default {
         }
       ],
       rowList: [],
-      senceList: [
+      // 目录
+      menuList: [
         {
-          value: '流量包营销',
-          label: '流量包营销'
+          value: '主套餐',
+          label: '主套餐'
+        },
+        {
+          value: '可选包',
+          label: '可选包'
         }
       ],
-      // 上线状态
-      stateList: [
-        {
-          value: 1,
-          label: '开启'
-        },
-        {
-          value: 0,
-          label: '关闭'
-        }
-      ],
-      // 审核状态
-      verifyList: [
-        {
-          value: 0,
-          label: '未审核'
-        },
-        {
-          value: 1,
-          label: '已审核'
-        }
-      ],
-      sences: [
-        {
-          value: '低零活动',
-          label: '低零活动'
-        },
-        {
-          value: '服务查询',
-          label: '服务查询'
-        },
+      // 产品类别
+      typeList: [
         {
           value: '互联网卡',
           label: '互联网卡'
         },
         {
-          value: '欢go客户端',
-          label: '欢go客户端'
+          value: '畅享套餐',
+          label: '畅享套餐'
         },
         {
-          value: '加黑名单专用',
-          label: '加黑名单专用'
+          value: '十全十美',
+          label: '十全十美'
         },
         {
-          value: '流量产品',
-          label: '流量产品'
-        },
-        {
-          value: '流量服务提醒',
-          label: '流量服务提醒'
-        },
-        {
-          value: '语音包',
-          label: '语音包'
+          value: '其它',
+          label: '其它'
         }
       ]
     }
+  },
+  created () {
+    this.touch = this.$route.params.touch
   },
   mounted () {
     this.getList()
@@ -302,8 +271,8 @@ export default {
   methods: {
     // 获取当前页列表数据
     getList () {
-      console.log(this.searchInfo)
-      this.$httpReq('/word/getWordList', {page: this.page, search: this.searchInfo}, 'get', (res) => {
+      this.searchInfo.touchId = this.touch.id
+      this.$httpReq('/operate/getList', {page: this.page, search: this.searchInfo}, 'get', res => {
         this.rowList = res.data.data.dataList
         this.page = res.data.data.page
         this.events = res.data.data.events
@@ -311,14 +280,33 @@ export default {
         this.editMode = false
       })
     },
-    // 新增
+    // 新增或修改
     saveInfo () {
       if (!this.editMode) {
         this.dismissPop()
         return
       }
       let isCreate = this.createTag === 0
-      this.$httpReq(isCreate ? '/word/addWord' : '/word/editWord', this.rowData, 'add', (res) => {
+      this.rowData.touchId = this.touch.id
+      let marketTime = this.rowData.marketTime
+      if (marketTime !== null && marketTime !== undefined && marketTime.length === 2) {
+        this.rowData.dayBeginTime = this.rowData.marketTime[0]
+        this.rowData.dayEndTime = this.rowData.marketTime[1]
+      }
+      console.log(this.rowData)
+      if (isCreate) {
+        this.$httpReq('/operate/add', this.rowData, 'add', res => {
+          this.$Message.success(res.data.msg)
+          this.showModal = false
+          this.rowData = {}
+          this.getList()
+        })
+      } else {
+        this.editInfo(this.rowData)
+      }
+    },
+    editInfo (rowData) {
+      this.$httpReq('/operate/edit', rowData, 'add', res => {
         this.$Message.success(res.data.msg)
         this.showModal = false
         this.rowData = {}
@@ -327,42 +315,45 @@ export default {
     },
     // 批量删除和单个删除
     deleteProduct (ids) {
-      this.$httpReq('/word/deleteWords', ids, 'post', res => {
+      this.$httpReq('/operate/delete', ids, 'post', res => {
         this.$Message.success(res.data.msg)
         this.getList()
       })
     },
-    // 设置话术开关状态
-    setStatus (rowData) {
-      this.$httpReq('/word/setWordStatus/' + rowData.id, {}, 'edit', (res) => {
-        this.$Message.success(res.data.msg)
-        this.getData()
-      })
-    },
-    formatDate (time) {
-      if (time === undefined || time == null) {
-        return ''
-      }
-      return moment(time).format('YYYY-MM-DD')
-    },
     // 新增产品弹框
     createProduct () {
-      this.popTitle = '新增话术模板'
+      this.popTitle = '新增运营位'
       this.showModal = true
       this.editMode = true
+      this.rowData = {
+        touchLimitCycle: 0,
+        touchLimitNum: 0,
+        monthLimitCount: 0
+      }
       this.createTag = 0
     },
     // 修改某一行数据
     editProduct (rowData) {
-      this.popTitle = '修改话术模板'
+      this.popTitle = '修改运营位'
+      let marketTime = []
+      marketTime.push(rowData.dayBeginTime)
+      marketTime.push(rowData.dayEndTime)
+      this.$set(rowData, 'marketTime', marketTime)
       this.rowData = rowData
       this.createTag = 1
       this.showModal = true
       this.editMode = true
     },
+    // 多选框变化
+    onSelectionChange (selection) {
+      this.deleteIds = []
+      for (let i = 0; i < selection.length; i++) {
+        this.deleteIds.push(selection[i].id)
+      }
+      console.log(this.deleteIds)
+    },
     // 弹框隐藏
     dismissPop () {
-      this.rowData = {}
       this.showModal = false
     },
     // 页码改变时触发
@@ -382,13 +373,7 @@ export default {
   }
 }
 </script>
-
 <style scoped>
-  .wrapper {
-    background: #ffffff;
-    margin: 5px;
-    padding: 5px;
-  }
   .code-row-bg {
     margin-top: 30px;
   }
@@ -403,6 +388,11 @@ export default {
     margin-top: 20px;
     margin-left: 30px;
     align-items: center;
+  }
+  .wrapper {
+    background: #ffffff;
+    margin: 5px;
+    padding: 5px;
   }
   .label {
     width: 100px;

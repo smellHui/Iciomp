@@ -3,70 +3,71 @@
     <Modal
       v-model="show"
       :title="title"
+      width="680"
+      :okText="!editMode?'保存':'关闭'"
       @on-ok="ok"
       @on-cancel="cancel">
-      <Form ref="formValidate" :model="product" :rules="ruleValidate" :label-width="80">
+      <Form ref="formValidate" :model="product" :label-width="100">
         <Row>
-          <i-col span="11">
-            <FormItem label="产品名称">
-              <Input v-model="product.proName" placeholder="产品名称"/>
+          <i-col span="12">
+            <FormItem label="产品名称" prop="proName">
+              <Input v-model="product.proName" placeholder="产品名称" :disabled="editMode"/>
             </FormItem>
           </i-col>
-          <i-col span="13">
-            <FormItem label="产品编码">
-              <Input v-model="product.proCode" placeholder="产品编码"/>
+          <i-col span="12">
+            <FormItem label="产品编码" prop="proCode">
+              <Input v-model="product.proCode" placeholder="产品编码" :disabled="editMode"/>
             </FormItem>
           </i-col>
         </Row>
         <Row>
-          <i-col span="11">
+          <i-col span="12">
             <FormItem label="目录">
-              <Select v-model="product.proMenu" placeholder="目录">
+              <Select v-model="product.proMenu" placeholder="目录" filterable clearable :disabled="editMode">
                 <Option v-for="item in menuList" :value="item.value" :key="item.value">{{ item.label }}</Option>
               </Select>
             </FormItem>
           </i-col>
-          <i-col span="13">
+          <i-col span="12">
             <FormItem label="产品类别">
-              <Select v-model="product.proType" placeholder="产品类别">
+              <Select v-model="product.proType" placeholder="产品类别" filterable clearable :disabled="editMode">
                 <Option v-for="item in typeList" :value="item.value" :key="item.value">{{ item.label }}</Option>
               </Select>
             </FormItem>
           </i-col>
         </Row>
         <Row>
-          <i-col span="11">
+          <i-col span="12">
             <FormItem label="定价ID">
-              <Input v-model="product.priceId" placeholder="定价ID"/>
+              <Input v-model="product.priceId" placeholder="定价ID" :disabled="editMode"/>
             </FormItem>
           </i-col>
-          <i-col span="13">
+          <i-col span="12">
             <FormItem label="短厅受理指令">
-              <Input v-model="product.orderCode" placeholder="短厅受理指令"/>
+              <Input v-model="product.orderCode" placeholder="短厅受理指令" :disabled="editMode"/>
             </FormItem>
           </i-col>
         </Row>
         <FormItem label="适用区域" prop="gender">
           <RadioGroup v-model="product.suitableCity">
-            <Radio label="全省">全省</Radio>
-            <Radio label="武汉">武汉</Radio>
-            <Radio label="非武汉">非武汉</Radio>
+            <Radio label="全省" :disabled="editMode">全省</Radio>
+            <Radio label="武汉" :disabled="editMode">武汉</Radio>
+            <Radio label="非武汉" :disabled="editMode">非武汉</Radio>
           </RadioGroup>
         </FormItem>
         <FormItem label="状态">
-          <i-switch v-model="toggle" size="large">
-            <span slot="open">On</span>
-            <span slot="close">Off</span>
+          <i-switch size="large" :true-value="1" :false-value="0" v-model="product.status" :disabled="editMode">
+            <span slot="open">开</span>
+            <span slot="close">关</span>
           </i-switch>
         </FormItem>
         <FormItem label="推广URL">
-          <Input v-model="product.url">
+          <Input v-model="product.url" :disabled="editMode">
             <span slot="prepend">http://</span>
-            <span slot="append">.com</span>
           </Input>
         </FormItem>
         <FormItem label="产品描述" prop="desc">
-          <Input v-model="product.remark" type="textarea" :autosize="{minRows: 2,maxRows: 5}"
+          <Input v-model="product.remark" type="textarea" :autosize="{minRows: 2,maxRows: 5}" :disabled="editMode"
                  placeholder="产品描述"/>
         </FormItem>
       </Form>
@@ -79,12 +80,11 @@
       value11: '',
       toggle: true,
       ruleValidate: {
-        name: [
-          {required: true, message: 'The name cannot be empty', trigger: 'blur'}
+        proName: [
+          {required: true, message: '产品名称必填', trigger: 'blur'}
         ],
-        mail: [
-          {required: true, message: 'Mailbox cannot be empty', trigger: 'blur'},
-          {type: 'email', message: 'Incorrect email format', trigger: 'blur'}
+        proCode: [
+          {required: true, message: '产品编码必填', trigger: 'blur'}
         ],
         city: [
           {required: true, message: 'Please select the city', trigger: 'change'}
@@ -121,6 +121,10 @@
       default: '新增产品'
     },
     show: {
+      type: Boolean,
+      default: false
+    },
+    editMode: {
       type: Boolean,
       default: false
     },

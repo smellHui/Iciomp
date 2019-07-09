@@ -2,84 +2,70 @@
   <div>
     <Modal
       v-model="show"
-      title="新增触点"
+      :title="title"
       width="680"
       @on-ok="ok"
       @on-cancel="cancel">
-      <Form ref="formValidate" :model="touch" :label-width="100">
+      <Form ref="formValidate" :model="product" :rules="ruleValidate" :label-width="100">
         <Row>
-          <i-col span="11">
-            <FormItem label="触点名称" prop="name">
-              <Input v-model="touch.touchName" placeholder="触点名称"/>
+          <i-col span="12">
+            <FormItem label="运营位名称">
+              <Input v-model="product.positionName" placeholder="运营位名称" :disabled="editMode"/>
             </FormItem>
           </i-col>
-          <i-col span="13">
-            <FormItem label="触点编码" prop="name">
-              <Input v-model="touch.touchCode" placeholder="触点编码"/>
+          <i-col span="12">
+            <FormItem label="编码">
+              <Input v-model="product.positionCode" placeholder="编码" :disabled="editMode"/>
             </FormItem>
           </i-col>
         </Row>
         <Row>
-          <i-col span="11">
-            <FormItem label="触点来源" prop="name">
-              <Input v-model="touch.touchSource" placeholder="触点来源"/>
+          <i-col span="12">
+            <FormItem label="关联触点">
+              <Input v-model="touchName" placeholder="关联触点" disabled="false"/>
             </FormItem>
           </i-col>
-          <i-col span="13">
-            <FormItem label="接触时效" prop="name">
-              <Select placeholder="接触时效">
-                <Option value="0">实时</Option>
-                <Option value="1">非实时</Option>
-              </Select>
+          <i-col span="12">
+            <FormItem label="日营销时间">
+               <TimePicker confirm type="timerange" v-model="product.marketTime" placement="bottom-end" placeholder="日营销时间" style="width: 180px" :disabled="editMode"></TimePicker>
             </FormItem>
           </i-col>
         </Row>
         <Row>
-          <i-col span="11">
-            <FormItem label="接触媒介" prop="name">
-              <Select placeholder="接触媒介">
-                <Option value="0">文本</Option>
-                <Option value="1">图片</Option>
-                <Option value="2">语音</Option>
-                <Option value="3">图文混合</Option>
-              </Select>
+          <i-col span="20">
+            <FormItem label="用户日接触频次">
+              <InputNumber style="width: 100px" :min="0" v-model="product.touchLimitCycle" :disabled="editMode"></InputNumber>
+              &#12288;天&#12288;
+              <InputNumber style="width: 100px" :min="0" v-model="product.touchLimitNum" :disabled="editMode"></InputNumber>
+              &#12288;次&#12288;
             </FormItem>
           </i-col>
-          <i-col span="13">
-            <FormItem label="月接触总阀值" prop="name">
-              <InputNumber :max="10" :min="1" v-model="touch.monthThreshold"></InputNumber>
+        </Row>
+        <Row>
+          <i-col span="12">
+            <FormItem label="月次接触阀值">
+              <InputNumber style="width: 200px" :min="0" v-model="product.monthLimitCount" :disabled="editMode"></InputNumber>
             </FormItem>
           </i-col>
         </Row>
         <FormItem label="状态">
-          <i-switch size="large" :true-value="1" :false-value="0" v-model="touch.status">
-            <span slot="open">开</span>
-            <span slot="close">关</span>
+          <i-switch v-model="product.status" size="large" :true-value="1" :false-value="0" :disabled="editMode">
+            <span slot="open">On</span>
+            <span slot="close">Off</span>
           </i-switch>
-        </FormItem>
-        <FormItem label="触点描述" prop="desc">
-          <Input v-model="touch.remark" type="textarea" :autosize="{minRows: 2,maxRows: 5}"
-                 placeholder="触点描述"/>
         </FormItem>
       </Form>
     </Modal>
   </div>
 </template>
-<script>export default {
+<script>
+import moment from 'moment'
+export default {
   data () {
     return {
+      marketTime: [],
       value11: '',
       toggle: true,
-      formValidate: {
-        name: '',
-        mail: '',
-        city: '',
-        gender: '',
-        interest: [],
-        date: '',
-        time: '',
-        desc: ''
-      },
       ruleValidate: {
         name: [
           {required: true, message: 'The name cannot be empty', trigger: 'blur'}
@@ -112,11 +98,28 @@
     }
   },
   props: {
+    menuList: {
+      type: Array
+    },
+    typeList: {
+      type: Array
+    },
+    title: {
+      type: String,
+      default: '新增产品'
+    },
+    touchName: {
+      type: String
+    },
     show: {
       type: Boolean,
       default: false
     },
-    touch: {
+    editMode: {
+      type: Boolean,
+      default: false
+    },
+    product: {
       type: Object
     }
   },
@@ -126,6 +129,9 @@
     },
     cancel () {
       this.$emit('cancelInfo')
+    },
+    formatDate (time) {
+      return moment(time).format('YYYY-MM-DD')
     }
   }
 }

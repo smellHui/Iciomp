@@ -19,7 +19,10 @@ import OrderDetail from '@/components/report/OrderDetail'
 import TransactionStatistics from '@/components/report/TransactionStatistics'
 import products from '@/components/productmgr/products'
 import speechs from '@/components/speechmgr/speechs'
+import wordAudit from '@/components/speechmgr/wordAudit'
 import touchs from '@/components/touchmgr/touchs'
+import operations from '@/components/touchmgr/operations'
+import BlackUsers from '@/components/users/BlackUsers'
 
 Vue.use(Router)
 
@@ -121,9 +124,24 @@ const vueRouter = new Router({
       component: speechs
     },
     {
+      path: '/speech/wordAudit',
+      name: 'wordAudit',
+      component: wordAudit
+    },
+    {
       path: '/touch/touchs',
       name: 'touchs',
       component: touchs
+    },
+    {
+      path: '/touch/operations',
+      name: 'operations',
+      component: operations
+    },
+    {
+      path: '/user/blackUsers',
+      name: 'blackUsers',
+      component: BlackUsers
     }
   ]
 })
