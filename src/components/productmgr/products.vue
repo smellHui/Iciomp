@@ -1,49 +1,48 @@
 <template>
   <div class="wrapper">
-    <Row type="flex" justify="start" style="margin-left: 50px">
-      <i-col class="icol" span="6">
-        <p class="label">产品名称</p>
-        <Input v-model="searchInfo.proName" placeholder="产品名称..." style="width: 300px"/>
+    <Row class="row">
+      <i-col span="3" class="label">产品名称</i-col>
+      <i-col span="5">
+        <Input v-model="searchInfo.proName" placeholder="产品名称"/>
       </i-col>
-      <i-col class="icol" span="6">
-        <p class="label">目录</p>
-        <Select v-model="searchInfo.proMenu" clearable style="width:300px">
+      <i-col span="3" class="label">目录</i-col>
+      <i-col span="5">
+        <Select v-model="searchInfo.proMenu" clearable style="width:auto" placeholder="请选择产品目录">
           <Option v-for="item in menuList" :value="item.value" :key="item.value">{{ item.label }}</Option>
         </Select>
       </i-col>
-      <i-col class="icol" span="6">
-        <p class="label">产品类别</p>
-        <Select v-model="searchInfo.proType" clearable style="width:300px">
+      <i-col span="3" class="label">产品类别</i-col>
+      <i-col span="5">
+        <Select v-model="searchInfo.proType" clearable style="width:auto" placeholder="请选择产品类别">
           <Option v-for="item in typeList" :value="item.value" :key="item.value">{{ item.label }}</Option>
         </Select>
       </i-col>
-      <i-col class="icol">
-        <p class="label">创建日期</p>
-        <DatePicker type="date" placeholder="开始日期" @on-change="(value) => this.searchInfo.startTime = value"
-                    style="width: 215px;margin-right: 10px"></DatePicker>
-        -
-        <DatePicker type="date" placeholder="结束日期" @on-change="(value) => this.searchInfo.endTime = value"
-                    style="width: 215px;margin-left: 10px"></DatePicker>
-      </i-col>
-    </Row>
-    <Row class="code-row-bg">
-      <Button type="primary" shape="circle" icon="ios-search" @click="getList">搜 索</Button>
-      <Button type="primary" shape="circle" icon="ios-search" @click="clearSearchInfo" style="margin-left: 30px">重 置</Button>
     </Row>
     <Row class="row">
-      <i-col span="20">
+      <i-col span="3" class="label">创建日期</i-col>
+      <i-col span="21">
+        <DatePicker type="date" placeholder="开始日期" @on-change="(value) => this.searchInfo.startTime = value"/>
+        &emsp;—&emsp;<DatePicker type="date" placeholder="结束日期" @on-change="(value) => this.searchInfo.endTime = value"/>
+      </i-col>
+    </Row>
+    <Row class="row">
+      <i-col span="24" style="text-align:center">
+        <Button icon="ios-search" type="primary" shape="circle" size="small" @click.native="getList">搜&emsp;索</Button>&emsp;&emsp;&emsp;&emsp;
+        <Button icon="ios-refresh" type="primary" shape="circle" size="small" @click.native="clearSearchInfo">重&emsp;置</Button>
+      </i-col>
+    </Row>
+    <Row class="row" :gutter="20">
+      <i-col span="18">
         <div class="title">
-          <Icon type="ios-list"/>
+          <Icon type="md-reorder" />
           产品列表
         </div>
       </i-col>
-      <i-col span="2">
-        <Button icon="ios-add" type="primary" size="small" @click="deleteProduct(deleteIds)">批量删除
-        </Button>
+      <i-col span="3" style="text-align: right">
+        <Button icon="ios-add" type="primary" size="small" @click="deleteProduct(deleteIds)">批量删除</Button>
       </i-col>
-      <i-col span="2">
-        <Button icon="ios-add" type="primary" size="small" @click="createProduct">新增产品
-        </Button>
+      <i-col span="3" style="text-align: right">
+        <Button icon="ios-add" type="primary" size="small" @click="createProduct">新增产品</Button>
       </i-col>
     </Row>
     <Row>
@@ -346,19 +345,12 @@ export default {
     margin: 5px auto;
     text-align: left
   }
-  .icol {
-    display: flex;
-    margin-top: 20px;
-    margin-left: 30px;
-    align-items: center;
-  }
   .wrapper {
     background: #ffffff;
     margin: 5px;
     padding: 5px;
   }
   .label {
-    width: 100px;
     text-align: right;
     padding-right: 10px;
   }

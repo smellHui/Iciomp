@@ -1,23 +1,25 @@
 <template>
   <div class="wrapper">
-    <Row style="margin-left: 50px">
-      <i-col class="icol" span="6">
-        <p class="label">客户号码</p>
-        <Input v-model="searchInfo.accNbr" placeholder="客户号码" style="width: 300px"/>
+    <Row class="row">
+      <i-col span="3" class="label">客户号码</i-col>
+      <i-col span="5">
+        <Input v-model="searchInfo.accNbr" placeholder="客户号码"/>
       </i-col>
     </Row>
-    <Row style="margin-left: 50px">
-      <i-col class="icol" span="6">
-        <p class="label">黑名单属性</p>
-        <Select v-model="searchInfo.blackType" clearable style="width:300px;text-align: left">
+    <Row class="row">
+      <i-col span="3" class="label">黑名单属性</i-col>
+      <i-col span="5">
+        <Select v-model="searchInfo.blackType" clearable style="width:auto" placeholder="请选择黑名单属性">
           <Option v-for="item in menuList" :value="item.value" :key="item.value">{{ item.label }}</Option>
         </Select>
       </i-col>
     </Row>
-    <Row class="code-row-bg">
-      <Button type="primary" shape="circle" icon="ios-search" @click="addBlackUser">添加</Button>
-      <Button type="primary" shape="circle" icon="ios-search" @click="deleteBlackUser" style="margin-left: 30px">删除</Button>
-      <Button type="primary" shape="circle" icon="ios-search" @click="searchBlackUser" style="margin-left: 30px">查找</Button>
+    <Row class="row">
+      <i-col span="24" style="text-align:center">
+        <Button icon="md-add" type="primary" shape="circle" size="small" @click.native="addBlackUser">添  加</Button>
+        <Button icon="md-close" type="primary" shape="circle" size="small" @click.native="deleteBlackUser">删  除</Button>
+        <Button icon="ios-search" type="primary" shape="circle" size="small" @click.native="searchBlackUser">查  找</Button>
+      </i-col>
     </Row>
     <Row class="row">
       <i-col span="20">
@@ -79,6 +81,11 @@ export default {
             let createTime = params.row.createTime
             return h('dev', this.formatDate(createTime))
           }
+        },
+        {
+          title: '操作员',
+          align: 'center',
+          key: 'operator'
         }
       ]
     }
@@ -126,20 +133,11 @@ export default {
 }
 </script>
 <style scoped>
-  .code-row-bg {
-    margin-top: 30px;
-  }
   .row {
     height: 32px;
     line-height: 32px;
     margin: 5px auto;
     text-align: left
-  }
-  .icol {
-    display: flex;
-    margin-top: 20px;
-    margin-left: 30px;
-    align-items: center;
   }
   .wrapper {
     background: #ffffff;
@@ -147,7 +145,6 @@ export default {
     padding: 5px;
   }
   .label {
-    width: 100px;
     text-align: right;
     padding-right: 10px;
   }

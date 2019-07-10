@@ -1,45 +1,49 @@
 <template>
   <div class="wrapper">
-    <Row type="flex" justify="start" style="margin-left: 50px">
-      <i-col class="icol" span="6">
-        <p class="label">模板名称</p>
-        <Input v-model="searchInfo.templateName" placeholder="模板名称..." style="width: 300px"/>
+    <Row class="row">
+      <i-col span="3" class="label">模板名称</i-col>
+      <i-col span="5">
+        <Input v-model="searchInfo.templateName" placeholder="模板名称"/>
       </i-col>
-      <i-col class="icol" span="6">
-        <p class="label">适用场景</p>
-        <Input v-model="searchInfo.suitableSence" placeholder="适用场景" style="width: 300px"/>
+      <i-col span="3" class="label">适用场景</i-col>
+      <i-col span="5">
+        <Select v-model="searchInfo.suitableSence" placeholder="适用场景" filterable clearable style="width: auto">
+          <Option v-for="item in sences" :value="item.value" :key="item.value">{{ item.label }}</Option>
+        </Select>
       </i-col>
-      <i-col class="icol" span="3">
-        <p class="label">上线状态</p>
-        <Select v-model="searchInfo.status" clearable style="width:100px">
+      <i-col span="3" class="label">开关状态</i-col>
+      <i-col span="5">
+        <Select v-model="searchInfo.status" clearable style="width: auto" placeholder="请选择开关状态">
           <Option v-for="item in stateList" :value="item.value" :key="item.value">{{ item.label }}</Option>
         </Select>
       </i-col>
-      <i-col class="icol" span="3">
-        <p class="label">审核状态</p>
-        <Select v-model="searchInfo.verify" clearable style="width:100px">
+    </Row>
+    <Row class="row">
+      <i-col span="3" class="label">审核状态</i-col>
+      <i-col span="5">
+        <Select v-model="searchInfo.verify" clearable >
           <Option v-for="item in verifyList" :value="item.value" :key="item.value">{{ item.label }}</Option>
         </Select>
       </i-col>
-      <i-col class="icol" span="6">
-        <p class="label">开始日期</p>
-        <DatePicker type="date" placeholder="开始日期"  @on-change="(value) => this.searchInfo.startTime = value"
-                    style="width: 215px;margin-right: 10px"></DatePicker>
+      <i-col span="3" class="label">开始日期</i-col>
+      <i-col span="5">
+        <DatePicker type="date" placeholder="开始日期" @on-change="(value) => this.searchInfo.startTime = value" />
       </i-col>
-      <i-col class="icol" span="6">
-        <p class="label">失效日期</p>
-        <DatePicker type="date" placeholder="失效日期"  @on-change="(value) => this.searchInfo.endTime = value"
-                    style="width: 215px;margin-right: 10px"></DatePicker>
+      <i-col span="3" class="label">失效日期</i-col>
+      <i-col span="5">
+        <DatePicker type="date" placeholder="失效日期" @on-change="(value) => this.searchInfo.endTime = value" />
       </i-col>
     </Row>
-    <Row class="code-row-bg">
-      <Button type="primary" shape="circle" icon="ios-search" @click="getList">搜 索</Button>
-      <Button type="primary" shape="circle" icon="ios-search" @click="clearSearchInfo" style="margin-left: 30px">重 置</Button>
+    <Row class="row">
+      <i-col span="24" style="text-align:center">
+        <Button icon="ios-search" type="primary" shape="circle" size="small" @click.native="getList">搜&emsp;索</Button>&emsp;&emsp;&emsp;&emsp;
+        <Button icon="ios-refresh" type="primary" shape="circle" size="small" @click.native="clearSearchInfo">重&emsp;置</Button>
+      </i-col>
     </Row>
     <Row class="row">
       <i-col span="22">
         <div class="title">
-          <Icon type="ios-list"/>
+          <Icon type="md-reorder" />
           话术列表
         </div>
       </i-col>
@@ -232,6 +236,40 @@ export default {
           value: 1,
           label: '已审核'
         }
+      ],
+      sences: [
+        {
+          value: '低零活动',
+          label: '低零活动'
+        },
+        {
+          value: '服务查询',
+          label: '服务查询'
+        },
+        {
+          value: '互联网卡',
+          label: '互联网卡'
+        },
+        {
+          value: '欢go客户端',
+          label: '欢go客户端'
+        },
+        {
+          value: '加黑名单专用',
+          label: '加黑名单专用'
+        },
+        {
+          value: '流量产品',
+          label: '流量产品'
+        },
+        {
+          value: '流量服务提醒',
+          label: '流量服务提醒'
+        },
+        {
+          value: '语音包',
+          label: '语音包'
+        }
       ]
     }
   },
@@ -271,7 +309,7 @@ export default {
       if (time === undefined || time == null) {
         return ''
       }
-      return moment(time).format('YYYY-MM-DD')
+      return moment(time).format('YYYY/MM/DD')
     },
     // 弹框隐藏
     dismissPop () {
@@ -310,7 +348,6 @@ export default {
   .icol {
     display: flex;
     margin-top: 20px;
-    margin-left: 30px;
     align-items: center;
   }
   .wrapper {
@@ -319,7 +356,6 @@ export default {
     padding: 5px;
   }
   .label {
-    width: 100px;
     text-align: right;
     padding-right: 10px;
   }

@@ -3,7 +3,7 @@
     <Row type="flex" justify="start" style="margin-left: 50px">
       <i-col class="icol" span="6">
         <p class="label">运营位名称</p>
-        <Input v-model="searchInfo.positionName" placeholder="产品名称..." style="width: 300px"/>
+        <Input v-model="searchInfo.positionName" placeholder="运营位名称" style="width: 300px"/>
       </i-col>
       <i-col class="icol">
         <p class="label">日营销时间</p>
@@ -21,12 +21,12 @@
     <Row class="row">
       <i-col span="20">
         <div class="title">
-          <Icon type="ios-list"/>
+          <Icon type="md-reorder" />
           运营位列表
         </div>
       </i-col>
-      <i-col span="2">
-        <Button icon="ios-add" type="primary" size="small" @click="createProduct">新增产品
+      <i-col span="4" style="text-align: right">
+        <Button icon="ios-add" type="primary" size="small" @click="createProduct">新增运营位
         </Button>
       </i-col>
     </Row>
@@ -110,18 +110,15 @@ export default {
         {
           title: '名称',
           align: 'center',
-          width: 140,
           key: 'positionName'
         },
         {
           title: '编码',
           align: 'center',
-          width: 160,
           key: 'positionCode'
         },
         {
           title: '用户日接触频次',
-          width: 320,
           align: 'center',
           children: [
             {
@@ -138,7 +135,6 @@ export default {
         },
         {
           title: '月次接触阀值（次）',
-          width: 140,
           align: 'center',
           key: 'monthLimitCount'
         },
@@ -149,11 +145,13 @@ export default {
             {
               title: '起始',
               align: 'center',
+              width: 100,
               key: 'dayBeginTime'
             },
             {
               title: '截至',
               align: 'center',
+              width: 100,
               key: 'dayEndTime'
             }
           ]
@@ -161,7 +159,6 @@ export default {
         {
           title: '创建人',
           align: 'center',
-          width: 140,
           key: 'operator'
         },
         {

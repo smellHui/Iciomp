@@ -1,7 +1,7 @@
 <template>
   <div class="wrapper">
     <Row>
-     <i-col style="float: right">
+     <i-col style="text-align: right">
        <Button icon="ios-add" type="primary" size="small" @click="showModal = true">新增触点
        </Button>
      </i-col>
@@ -43,8 +43,8 @@
           </i-col>
         </Row>
         <Row class="code-row-bg">
-          <Button type="primary" shape="circle" icon="ios-search" @click="editClick(touch)">{{touch.edit ? '保存' : '编辑'}}</Button>
-          <Button type="primary" shape="circle" icon="ios-search" @click="routerToOperate(touch)" style="margin-left: 30px">运营位</Button>
+          <Button type="primary" shape="circle" icon="ios-brush" @click="editClick(touch)">{{touch.edit ? '保存' : '编辑'}}</Button>
+          <Button type="primary" shape="circle" icon="ios-bug" @click="routerToOperate(touch)" style="margin-left: 30px">运营位</Button>
         </Row>
       </div>
     </Form>

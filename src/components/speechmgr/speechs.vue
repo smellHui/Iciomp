@@ -1,49 +1,53 @@
 <template>
   <div class="wrapper">
-    <Row type="flex" justify="start" style="margin-left: 50px">
-      <i-col class="icol" span="6">
-        <p class="label">模板名称</p>
-        <Input v-model="searchInfo.templateName" placeholder="模板名称" style="width: 300px"/>
+    <Row class="row">
+      <i-col span="3" class="label">模板名称</i-col>
+      <i-col span="5">
+        <Input v-model="searchInfo.templateName" placeholder="模板名称"/>
       </i-col>
-      <i-col class="icol" span="6">
-        <p class="label">适用场景</p>
-        <Select v-model="searchInfo.suitableSence" placeholder="适用场景" filterable clearable style="width: 300px">
+      <i-col span="3" class="label">适用场景</i-col>
+      <i-col span="5">
+        <Select v-model="searchInfo.suitableSence" placeholder="适用场景" filterable clearable style="width: auto">
           <Option v-for="item in sences" :value="item.value" :key="item.value">{{ item.label }}</Option>
         </Select>
       </i-col>
-      <i-col class="icol" span="3">
-        <p class="label">上线状态</p>
-        <Select v-model="searchInfo.status" clearable style="width:100px">
+      <i-col span="3" class="label">开关状态</i-col>
+      <i-col span="5">
+        <Select v-model="searchInfo.status" clearable style="width: auto" placeholder="请选择开关状态">
           <Option v-for="item in stateList" :value="item.value" :key="item.value">{{ item.label }}</Option>
         </Select>
       </i-col>
-      <i-col class="icol" span="3">
-        <p class="label">审核状态</p>
-        <Select v-model="searchInfo.verify" clearable style="width:100px">
+    </Row>
+    <Row class="row">
+      <i-col span="3" class="label">审核状态</i-col>
+      <i-col span="5">
+        <Select v-model="searchInfo.verify" clearable >
           <Option v-for="item in verifyList" :value="item.value" :key="item.value">{{ item.label }}</Option>
         </Select>
       </i-col>
-      <i-col class="icol" span="6">
-        <p class="label">开始日期</p>
-        <DatePicker type="date" placeholder="开始日期" @on-change="(value) => this.searchInfo.startTime = value" style="width: 215px;margin-right: 10px"></DatePicker>
+      <i-col span="3" class="label">开始日期</i-col>
+      <i-col span="5">
+        <DatePicker type="date" placeholder="开始日期" @on-change="(value) => this.searchInfo.startTime = value" />
       </i-col>
-      <i-col class="icol" span="6">
-        <p class="label">失效日期</p>
-        <DatePicker type="date" placeholder="失效日期" @on-change="(value) => this.searchInfo.endTime = value" style="width: 215px;margin-right: 10px"></DatePicker>
+      <i-col span="3" class="label">失效日期</i-col>
+      <i-col span="5">
+        <DatePicker type="date" placeholder="失效日期" @on-change="(value) => this.searchInfo.endTime = value" />
       </i-col>
     </Row>
-    <Row class="code-row-bg">
-      <Button type="primary" shape="circle" icon="ios-search" @click="getList">搜 索</Button>
-      <Button type="primary" shape="circle" icon="ios-search" @click="clearSearchInfo" style="margin-left: 30px">重 置</Button>
+    <Row class="row">
+      <i-col span="24" style="text-align:center">
+        <Button icon="ios-search" type="primary" shape="circle" size="small" @click.native="getList">搜&emsp;索</Button>&emsp;&emsp;&emsp;&emsp;
+        <Button icon="ios-refresh" type="primary" shape="circle" size="small" @click.native="clearSearchInfo">重&emsp;置</Button>
+      </i-col>
     </Row>
     <Row class="row">
       <i-col span="21">
         <div class="title">
-          <Icon type="ios-list"/>
+          <Icon type="md-reorder" />
           话术列表
         </div>
       </i-col>
-      <i-col span="2">
+      <i-col span="3" style="text-align: right">
         <Button icon="ios-add" type="primary" size="small"  @click="createProduct">新增话术模板
         </Button>
       </i-col>
@@ -122,18 +126,17 @@ export default {
         },
         {
           title: '模板名称',
-          width: 200,
           align: 'center',
           key: 'templateName'
         },
         {
           title: '模板内容',
           align: 'center',
+          width: 220,
           key: 'wordContent'
         },
         {
           title: '类型',
-          width: 200,
           align: 'center',
           render: (h, params) => {
             return h('div', {}, [
@@ -143,13 +146,12 @@ export default {
         },
         {
           title: '场景',
-          width: 200,
           align: 'center',
           key: 'suitableSence'
         },
         {
           title: '时间',
-          width: 220,
+          width: 180,
           align: 'center',
           render: (h, params) => {
             return h('div', {}, [
@@ -162,7 +164,7 @@ export default {
           key: 'status',
           align: 'center',
           sortable: true,
-          width: 110,
+          width: 90,
           render: (h, params) => {
             return h('i-switch', {
               props: {
@@ -185,7 +187,7 @@ export default {
         },
         {
           title: '审核状态',
-          width: 105,
+          width: 90,
           key: 'state',
           align: 'center',
           sortable: true,
@@ -196,7 +198,7 @@ export default {
         {
           title: '操作',
           key: 'action',
-          width: 150,
+          width: 130,
           align: 'center',
           render: (h, params) => {
             return h('div', [
@@ -343,7 +345,7 @@ export default {
       if (time === undefined || time == null) {
         return ''
       }
-      return moment(time).format('YYYY-MM-DD')
+      return moment(time).format('YYYY/MM/DD')
     },
     // 新增产品弹框
     createProduct () {
@@ -389,23 +391,13 @@ export default {
     margin: 5px;
     padding: 5px;
   }
-  .code-row-bg {
-    margin-top: 30px;
-  }
   .row {
     height: 32px;
     line-height: 32px;
     margin: 5px auto;
     text-align: left
   }
-  .icol {
-    display: flex;
-    margin-top: 20px;
-    margin-left: 30px;
-    align-items: center;
-  }
   .label {
-    width: 100px;
     text-align: right;
     padding-right: 10px;
   }
