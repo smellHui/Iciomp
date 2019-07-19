@@ -293,6 +293,9 @@ export default {
     // 新增产品弹框
     createProduct () {
       this.popTitle = '新增产品'
+      this.rowData = {
+        status: 0
+      }
       this.showModal = true
       this.editMode = true
       this.createTag = 0

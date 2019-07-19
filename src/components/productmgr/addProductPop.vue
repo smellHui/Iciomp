@@ -70,11 +70,17 @@
           <Input v-model="product.remark" type="textarea" :autosize="{minRows: 2,maxRows: 5}" :disabled="editMode"
                  placeholder="产品描述"/>
         </FormItem>
+        <OtherView :editMode='editMode' :createTime="product.createTime" :updateTime="product.updateTime"></OtherView>
       </Form>
     </Modal>
   </div>
 </template>
-<script>export default {
+<script>
+import OtherView from '.././charts/OtherView'
+export default {
+  components: {
+    OtherView
+  },
   data () {
     return {
       value11: '',

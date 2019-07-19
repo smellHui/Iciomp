@@ -5,16 +5,16 @@
       <i-col span="5">
         <Input v-model="searchInfo.templateName" placeholder="模板名称"/>
       </i-col>
+      <i-col span="3" class="label">模板类型</i-col>
+      <i-col span="5">
+        <Select v-model="searchInfo.templateType" clearable >
+          <Option v-for="item in types" :value="item.value" :key="item.value">{{ item.label }}</Option>
+        </Select>
+      </i-col>
       <i-col span="3" class="label">适用场景</i-col>
       <i-col span="5">
         <Select v-model="searchInfo.suitableSence" placeholder="适用场景" filterable clearable style="width: auto">
           <Option v-for="item in sences" :value="item.value" :key="item.value">{{ item.label }}</Option>
-        </Select>
-      </i-col>
-      <i-col span="3" class="label">开关状态</i-col>
-      <i-col span="5">
-        <Select v-model="searchInfo.status" clearable style="width: auto" placeholder="请选择开关状态">
-          <Option v-for="item in stateList" :value="item.value" :key="item.value">{{ item.label }}</Option>
         </Select>
       </i-col>
     </Row>
@@ -32,6 +32,14 @@
       <i-col span="3" class="label">失效日期</i-col>
       <i-col span="5">
         <DatePicker type="date" placeholder="失效日期" @on-change="(value) => this.searchInfo.endTime = value" />
+      </i-col>
+    </Row>
+    <Row class="row">
+      <i-col span="3" class="label">开关状态</i-col>
+      <i-col span="5">
+        <Select v-model="searchInfo.status" clearable style="width: auto" placeholder="请选择开关状态">
+          <Option v-for="item in stateList" :value="item.value" :key="item.value">{{ item.label }}</Option>
+        </Select>
       </i-col>
     </Row>
     <Row class="row">
@@ -65,7 +73,7 @@
               show-sizer show-elevator/>
       </i-col>
     </Row>
-    <addSpeechPop :editMode='!editMode' :template='template' :title="popTitle" :show="showModal" @saveInfo="saveInfo" @cancelInfo="dismissPop"></addSpeechPop>
+    <addSpeechPop :editMode='!editMode' :template='template' :title="popTitle" :show="showModal" :types="types" @saveInfo="saveInfo" @cancelInfo="dismissPop"></addSpeechPop>
   </div>
 </template>
 
@@ -129,6 +137,7 @@ export default {
         {
           title: '模板内容',
           align: 'center',
+          width: 290,
           key: 'wordContent'
         },
         {
@@ -148,6 +157,7 @@ export default {
         {
           title: '时间',
           align: 'center',
+          width: 110,
           render: (h, params) => {
             return h('div', {}, [
               h('p', this.formatDate(params.row.startTime) + ' - ' + this.formatDate(params.row.endTime))
@@ -235,6 +245,17 @@ export default {
         {
           value: 1,
           label: '已审核'
+        }
+      ],
+      // 模板类型
+      types: [
+        {
+          label: '主话术',
+          value: 0
+        },
+        {
+          label: '营销后缀',
+          value: 1
         }
       ],
       sences: [
@@ -344,11 +365,6 @@ export default {
     line-height: 32px;
     margin: 5px auto;
     text-align: left
-  }
-  .icol {
-    display: flex;
-    margin-top: 20px;
-    align-items: center;
   }
   .wrapper {
     background: #ffffff;

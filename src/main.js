@@ -109,8 +109,8 @@ Vue.prototype.$httpReq = function (url, data, type, todo) {
 const store = new Vuex.Store({
   state: {
     loginFlag: sessionStorage.getItem('isLogin') === 'true',
-    serviceRoot: 'http://localhost:8811',
-    // serviceRoot: '/iciomp',
+    // serviceRoot: 'http://localhost:8280',
+    serviceRoot: '/iciomp',
     tags: ['home'],
     currentPage: 'home',
     openMenus: [],

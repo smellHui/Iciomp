@@ -24,7 +24,7 @@
     <Row class="row">
       <i-col span="20">
         <div class="title">
-          <Icon type="ios-list"/>
+          <Icon type="md-reorder"/>
           黑名单列表
         </div>
       </i-col>
@@ -32,6 +32,18 @@
     <Row>
       <i-col span="24">
         <Table ref="tabDataList" :columns="columns" :data="rowList" border stripe></Table>
+      </i-col>
+    </Row>
+    <!-- 分页组件 -->
+    <Row class="row">
+      <i-col span="24">
+        <Page :total="page.totalRecord"
+              :page-size="page.size"
+              :page-size-opts="pageOption"
+              :current="page.currentNum"
+              @on-change="pageChange"
+              @on-page-size-change="sizeChange"
+              show-sizer show-elevator/>
       </i-col>
     </Row>
   </div>
@@ -46,6 +58,14 @@ export default {
       deleteIds: [],
       searchInfo: {},
       rowList: [],
+      // 分页组件数据绑定
+      page: {
+        totalRecord: 0,
+        size: 10,
+        currentNum: 1
+      },
+      // 分页组件每页数量
+      pageOption: [5, 10, 20, 50, 100],
       menuList: [
         {
           value: 0,
@@ -93,9 +113,9 @@ export default {
   methods: {
     // 获取当前页列表数据
     searchBlackUser () {
-      this.$httpReq('/user/getBlackUser', {search: this.searchInfo}, 'get', res => {
-        console.log(res.data.data)
-        this.rowList = res.data.data
+      this.$httpReq('/user/getBlackUser', {page: this.page, search: this.searchInfo}, 'get', res => {
+        this.rowList = res.data.data.dataList
+        this.page = res.data.data.page
       })
     },
     // 新增
@@ -125,6 +145,16 @@ export default {
         default:
           return '全部'
       }
+    },
+    // 页码改变时触发
+    pageChange (page) {
+      this.page.currentNum = page
+      this.searchBlackUser()
+    },
+    // 每页显示条数改变时触发
+    sizeChange (size) {
+      this.page.size = size
+      this.searchBlackUser()
     },
     formatDate (time) {
       return moment(time).format('YYYY-MM-DD h:mm:ss')

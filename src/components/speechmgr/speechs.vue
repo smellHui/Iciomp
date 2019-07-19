@@ -5,16 +5,16 @@
       <i-col span="5">
         <Input v-model="searchInfo.templateName" placeholder="模板名称"/>
       </i-col>
+      <i-col span="3" class="label">模板类型</i-col>
+      <i-col span="5">
+        <Select v-model="searchInfo.templateType" clearable >
+          <Option v-for="item in types" :value="item.value" :key="item.value">{{ item.label }}</Option>
+        </Select>
+      </i-col>
       <i-col span="3" class="label">适用场景</i-col>
       <i-col span="5">
         <Select v-model="searchInfo.suitableSence" placeholder="适用场景" filterable clearable style="width: auto">
           <Option v-for="item in sences" :value="item.value" :key="item.value">{{ item.label }}</Option>
-        </Select>
-      </i-col>
-      <i-col span="3" class="label">开关状态</i-col>
-      <i-col span="5">
-        <Select v-model="searchInfo.status" clearable style="width: auto" placeholder="请选择开关状态">
-          <Option v-for="item in stateList" :value="item.value" :key="item.value">{{ item.label }}</Option>
         </Select>
       </i-col>
     </Row>
@@ -32,6 +32,14 @@
       <i-col span="3" class="label">失效日期</i-col>
       <i-col span="5">
         <DatePicker type="date" placeholder="失效日期" @on-change="(value) => this.searchInfo.endTime = value" />
+      </i-col>
+    </Row>
+    <Row class="row">
+      <i-col span="3" class="label">开关状态</i-col>
+      <i-col span="5">
+        <Select v-model="searchInfo.status" clearable style="width: auto" placeholder="请选择开关状态">
+          <Option v-for="item in stateList" :value="item.value" :key="item.value">{{ item.label }}</Option>
+        </Select>
       </i-col>
     </Row>
     <Row class="row">
@@ -69,7 +77,7 @@
               show-sizer show-elevator/>
       </i-col>
     </Row>
-    <addSpeechPop :editMode='!editMode' :template='rowData' :title="popTitle" :show="showModal" :sences="sences" @saveInfo="saveInfo" @cancelInfo="dismissPop"></addSpeechPop>
+    <addSpeechPop :editMode='!editMode' :template='rowData' :title="popTitle" :show="showModal" :sences="sences" :types="types" @saveInfo="saveInfo" @cancelInfo="dismissPop"></addSpeechPop>
   </div>
 </template>
 <script>
@@ -132,7 +140,7 @@ export default {
         {
           title: '模板内容',
           align: 'center',
-          width: 220,
+          width: 290,
           key: 'wordContent'
         },
         {
@@ -151,7 +159,7 @@ export default {
         },
         {
           title: '时间',
-          width: 180,
+          width: 110,
           align: 'center',
           render: (h, params) => {
             return h('div', {}, [
@@ -234,12 +242,6 @@ export default {
         }
       ],
       rowList: [],
-      senceList: [
-        {
-          value: '流量包营销',
-          label: '流量包营销'
-        }
-      ],
       // 上线状态
       stateList: [
         {
@@ -262,6 +264,18 @@ export default {
           label: '已审核'
         }
       ],
+      // 模板类型
+      types: [
+        {
+          label: '主话术',
+          value: 0
+        },
+        {
+          label: '营销后缀',
+          value: 1
+        }
+      ],
+      // 适用场景
       sences: [
         {
           value: '低零活动',
@@ -350,6 +364,9 @@ export default {
     // 新增产品弹框
     createProduct () {
       this.popTitle = '新增话术模板'
+      this.rowData = {
+        status: 0
+      }
       this.showModal = true
       this.editMode = true
       this.createTag = 0

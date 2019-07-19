@@ -24,7 +24,7 @@
         </Row>
         <FormItem label="模板类型">
           <RadioGroup v-model="template.templateType" @on-change="changeTemplateType">
-            <Radio v-for="item in typeList" :label="item.value" :key="item.value" :disabled="editMode">
+            <Radio v-for="item in types" :label="item.value" :key="item.value" :disabled="editMode">
               <span>{{item.label}}</span>
             </Radio>
           </RadioGroup>
@@ -55,13 +55,17 @@
             <span slot="close">关</span>
           </i-switch>
         </FormItem>
+        <OtherView :editMode='editMode' :createTime="template.createTime" :updateTime="template.updateTime"></OtherView>
       </Form>
     </Modal>
   </div>
 </template>
 <script>
-import moment from 'moment'
+import OtherView from '.././charts/OtherView'
 export default {
+  components: {
+    OtherView
+  },
   data () {
     return {
       startTime: '',
@@ -78,16 +82,6 @@ export default {
         time: '',
         desc: ''
       },
-      typeList: [
-        {
-          label: '主话术',
-          value: 0
-        },
-        {
-          label: '营销后缀',
-          value: 1
-        }
-      ],
       ruleValidate: {
         templateName: [
           {required: true, message: '模板名称不能为空', trigger: 'blur'}
@@ -140,30 +134,17 @@ export default {
     },
     sences: {
       type: Array
+    },
+    types: {
+      type: Array
     }
   },
-  // created () {
-  //   this.startTime = this.template.startTime
-  //   this.endTime = this.template.endTime
-  // },
-  // watch: {
-  //   'startTime': function (newVal) {
-  //     this.template.startTime = this.formatDate(newVal[0])
-  //   },
-  //   'endTime': function (newVal) {
-  //     this.template.endTime = this.formatDate(newVal[0])
-  //   }
-  // },
   methods: {
     ok () {
       this.$emit('saveInfo')
     },
     cancel () {
       this.$emit('cancelInfo')
-    },
-    formatDate (time) {
-      console.log('formatDate---->' + time)
-      return moment(time).format('YYYY-MM-DD')
     },
     changeTemplateType () {
       console.log(this.template.templateType)

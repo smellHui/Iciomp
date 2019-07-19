@@ -2,40 +2,42 @@
   <div class="wrapper">
     <Row>
      <i-col style="text-align: right">
-       <Button icon="ios-add" type="primary" size="small" @click="showModal = true">新增触点
+       <Button icon="ios-add" type="primary" size="small" @click="createProduct">新增触点
        </Button>
      </i-col>
    </Row>
     <Form>
       <div v-for='touch in rowList' :key="touch">
         <Divider class="title" orientation="left">{{touch.touchName}}</Divider>
-        <Row>
-          <i-col class="icol" span="6">
-            <p class="label">触点编码</p>
-            <Input v-model="touch.touchCode" placeholder="Enter something..." style="width: 200px" :disabled="!touch.edit"/>
+        <Row class="row">
+          <i-col span="3" class="label">触点编码</i-col>
+          <i-col span="5">
+            <Input v-model="touch.touchCode" placeholder="触点编码" style="width: auto" :disabled="!touch.edit"/>
           </i-col>
-          <i-col class="icol" span="6">
-            <p class="label">触点来源</p>
-            <Input v-model="touch.touchSource" placeholder="Enter something..." style="width: 200px" :disabled="!touch.edit"/>
+          <i-col span="3" class="label">触点来源</i-col>
+          <i-col span="5">
+            <Input v-model="touch.touchSource" placeholder="触点来源" style="width: auto" :disabled="!touch.edit"/>
           </i-col>
-          <i-col class="icol" span="6">
-            <p class="label">接触时效</p>
-            <Select v-model="touch.timesType" clearable style="width:200px;text-align: left" :disabled="!touch.edit">
+          <i-col span="3" class="label">接触时效</i-col>
+          <i-col span="5">
+            <Select v-model="touch.timesType" clearable style="width: auto;text-align: left" :disabled="!touch.edit">
               <Option v-for="item in timeList" :value="item.value" :key="item.value">{{ item.label }}</Option>
             </Select>
           </i-col>
-          <i-col class="icol" span="6">
-            <p class="label">接触媒介</p>
-            <Select v-model="touch.touchMedia" clearable style="width:200px;text-align: left" :disabled="!touch.edit">
+        </Row>
+        <Row class="row">
+          <i-col span="3" class="label">接触媒介</i-col>
+          <i-col span="5">
+            <Select v-model="touch.touchMedia" clearable style="width: auto;text-align: left" :disabled="!touch.edit">
               <Option v-for="item in mediaList" :value="item.value" :key="item.value">{{ item.label }}</Option>
             </Select>
           </i-col>
-          <i-col class="icol" span="6">
-            <p class="label">月接触总阀值</p>
+          <i-col span="3" class="label">月接触总阀值</i-col>
+          <i-col span="5">
             <InputNumber :min="1" v-model="touch.monthThreshold" :disabled="!touch.edit"></InputNumber>
           </i-col>
-          <i-col class="icol" span="6">
-            <p class="label">开关</p>
+          <i-col span="3" class="label">开关</i-col>
+          <i-col span="5">
             <i-switch v-model="touch.status" size="large" :true-value="1" :false-value="0" :disabled="!touch.edit">
               <span slot="open">开</span>
               <span slot="close">关</span>
@@ -73,13 +75,6 @@ export default {
   },
   data () {
     return {
-      searchInfo: {
-        touchCode: '',
-        touchSource: '',
-        monthThreshold: 0,
-        touchMedia: 0,
-        timesType: 0
-      },
       // 分页组件数据绑定
       page: {
         totalRecord: 0,
@@ -128,7 +123,7 @@ export default {
   methods: {
     // 获取当前页列表数据
     getList () {
-      this.$httpReq('/touch/getList', {page: this.page, search: this.searchInfo}, 'get', (res) => {
+      this.$httpReq('/touch/getList', {page: this.page}, 'get', (res) => {
         this.rowList = res.data.data.dataList
         this.page = res.data.data.page
         this.events = res.data.data.events
@@ -171,13 +166,15 @@ export default {
       this.page.size = size
       this.getList()
     },
-    // 清空搜索表单数据
-    clearSearchInfo () {
-      this.searchInfo.proName = ''
-      this.searchInfo.proMenu = ''
-      this.searchInfo.proType = ''
-      this.searchInfo.startTime = ''
-      this.searchInfo.endTime = ''
+    // 新增产品弹框
+    createProduct () {
+      this.showModal = true
+      this.touch = {
+        status: 0,
+        monthThreshold: 1,
+        touchMedia: null,
+        timesType: null
+      }
     }
   }
 }
@@ -185,7 +182,7 @@ export default {
 
 <style scoped>
   .code-row-bg {
-    margin-top: 30px;
+    margin-top: 26px;
   }
   .row {
     height: 32px;
@@ -193,26 +190,19 @@ export default {
     margin: 5px auto;
     text-align: left
   }
-  .icol {
-    display: flex;
-    margin-top: 20px;
-    margin-left: 30px;
-    align-items: center;
-  }
   .wrapper {
     background: #ffffff;
-    padding: 30px 150px 40px;
+    padding: 30px 80px 40px;
   }
   .label {
     text-align: right;
-    width: 100px;
     padding-right: 10px;
   }
   .title {
     font-size: 20px;
     font-family: Arial, Helvetica, sans-serif;
     font-weight: bolder;
-    margin-top: 30px;
+    margin-top: 40px;
     padding-left: 10px;
   }
 </style>

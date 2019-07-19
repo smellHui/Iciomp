@@ -1,17 +1,15 @@
 <template>
   <div class="wrapper">
-    <Row type="flex" justify="start" style="margin-left: 50px">
-      <i-col class="icol" span="6">
-        <p class="label">运营位名称</p>
-        <Input v-model="searchInfo.positionName" placeholder="运营位名称" style="width: 300px"/>
+    <Row class="row">
+      <i-col span="3" class="label">运营位名称</i-col>
+      <i-col span="5">
+        <Input v-model="searchInfo.positionName" placeholder="运营位名称" style="width: auto"/>
       </i-col>
-      <i-col class="icol">
-        <p class="label">日营销时间</p>
-        <DatePicker type="date" placeholder="开始日期" @on-change="(value) => this.searchInfo.dayBeginTime = value"
-                    style="width: 215px;margin-right: 10px"></DatePicker>
-        -
-        <DatePicker type="date" placeholder="结束日期" @on-change="(value) => this.searchInfo.dayEndTime = value"
-                    style="width: 215px;margin-left: 10px"></DatePicker>
+      <i-col span="3" class="label">开关状态</i-col>
+      <i-col span="5">
+        <Select v-model="searchInfo.status" clearable style="width: 130px" placeholder="请选择开关状态">
+          <Option v-for="item in stateList" :value="item.value" :key="item.value">{{ item.label }}</Option>
+        </Select>
       </i-col>
     </Row>
     <Row class="code-row-bg">
@@ -256,6 +254,17 @@ export default {
           value: '其它',
           label: '其它'
         }
+      ],
+      // 上线状态
+      stateList: [
+        {
+          value: 1,
+          label: '开启'
+        },
+        {
+          value: 0,
+          label: '关闭'
+        }
       ]
     }
   },
@@ -272,8 +281,6 @@ export default {
       this.$httpReq('/operate/getList', {page: this.page, search: this.searchInfo}, 'get', res => {
         this.rowList = res.data.data.dataList
         this.page = res.data.data.page
-        this.events = res.data.data.events
-        this.currentRow = -1
         this.editMode = false
       })
     },
@@ -325,7 +332,8 @@ export default {
       this.rowData = {
         touchLimitCycle: 0,
         touchLimitNum: 0,
-        monthLimitCount: 0
+        monthLimitCount: 0,
+        status: 0
       }
       this.createTag = 0
     },
@@ -392,7 +400,6 @@ export default {
     padding: 5px;
   }
   .label {
-    width: 100px;
     text-align: right;
     padding-right: 10px;
   }

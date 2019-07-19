@@ -54,13 +54,18 @@
             <span slot="close">Off</span>
           </i-switch>
         </FormItem>
+        <OtherView :editMode='editMode' :createTime="formatDate(product.createTime)" :updateTime="formatDate(product.updateTime)"></OtherView>
       </Form>
     </Modal>
   </div>
 </template>
 <script>
 import moment from 'moment'
+import OtherView from '.././charts/OtherView'
 export default {
+  components: {
+    OtherView
+  },
   data () {
     return {
       marketTime: [],
@@ -131,7 +136,10 @@ export default {
       this.$emit('cancelInfo')
     },
     formatDate (time) {
-      return moment(time).format('YYYY-MM-DD')
+      if (time === null || time === undefined) {
+        return ''
+      }
+      return moment(time).format('YYYY-MM-DD HH:mm:ss')
     }
   }
 }

@@ -23,6 +23,9 @@ import wordAudit from '@/components/speechmgr/wordAudit'
 import touchs from '@/components/touchmgr/touchs'
 import operations from '@/components/touchmgr/operations'
 import BlackUsers from '@/components/users/BlackUsers'
+import StrategyLabel from '@/components/strategy/StrategyLabel'
+import Strategy from '@/components/strategy/Strategy'
+import StrategyConfig from '@/components/strategy/StrategyConfig'
 
 Vue.use(Router)
 
@@ -142,6 +145,21 @@ const vueRouter = new Router({
       path: '/user/blackUsers',
       name: 'blackUsers',
       component: BlackUsers
+    },
+    {
+      path: '/strategy/strategyLabel',
+      name: 'StrategyLabel',
+      component: StrategyLabel
+    },
+    {
+      path: '/strategy/strategy',
+      name: 'Strategy',
+      component: Strategy
+    },
+    {
+      path: '/strategy/strategyConfig',
+      name: 'StrategyConfig',
+      component: StrategyConfig
     }
   ]
 })

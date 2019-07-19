@@ -27,7 +27,7 @@
           </i-col>
           <i-col span="13">
             <FormItem label="接触时效" prop="name">
-              <Select placeholder="接触时效">
+              <Select v-model="touch.timesType" placeholder="接触时效">
                 <Option value="0">实时</Option>
                 <Option value="1">非实时</Option>
               </Select>
@@ -37,7 +37,7 @@
         <Row>
           <i-col span="11">
             <FormItem label="接触媒介" prop="name">
-              <Select placeholder="接触媒介">
+              <Select v-model="touch.touchMedia" placeholder="接触媒介">
                 <Option value="0">文本</Option>
                 <Option value="1">图片</Option>
                 <Option value="2">语音</Option>
@@ -68,7 +68,6 @@
 <script>export default {
   data () {
     return {
-      value11: '',
       toggle: true,
       formValidate: {
         name: '',
